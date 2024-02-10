@@ -1,6 +1,7 @@
 package fr.erased.clans.commands.subcommands.admin;
 
 import fr.erased.clans.ErasedClans;
+import fr.erased.clans.chunks.ClaimedChunks;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.Chunk;
@@ -20,13 +21,17 @@ public class ForceUnclaimCommand {
 
         Chunk chunk = player.getLocation().getChunk();
 
-        if(!main.getChunkManager().isClaimed(chunk)){
+        if(!main.getChunkManager().getChunks().isClaimed(chunk.toString())){
             player.sendMessage("§cCe chunk c'est pas claim.");
             return;
         }
 
-        String clan = main.getChunkManager().getClaimer(chunk);
-        main.getChunkManager().unClaimChunk(player);
+        String clan = main.getChunkManager().getChunks().getClaimer(chunk.toString());
+
+        ClaimedChunks chunks = main.getChunkManager().getChunks();
+        chunks.unClaimChunk(chunk.toString());
+        main.getChunkManager().saveToFile(chunks);
+
         player.sendMessage("§aVous avez unclaim ce chunk du clan " + clan);
     }
 }

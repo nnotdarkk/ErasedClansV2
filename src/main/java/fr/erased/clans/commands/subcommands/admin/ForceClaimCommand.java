@@ -1,7 +1,7 @@
 package fr.erased.clans.commands.subcommands.admin;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.utils.FileUtils;
+import fr.erased.clans.chunks.ClaimedChunks;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.Chunk;
@@ -26,24 +26,27 @@ public class ForceClaimCommand {
 
         String clan = args.getArgs(0);
 
-        if (!new FileUtils(main).getFile("clans", clan).exists()) {
+        if (main.getFileUtils().getFile("clans", clan).exists()) {
             player.sendMessage("§cCe clan n'existe pas !");
             return;
         }
 
         Chunk chunk = player.getLocation().getChunk();
 
-        if(main.getChunkManager().isClaimed(chunk)){
+        if(main.getChunkManager().getChunks().isClaimed(chunk.toString())){
             player.sendMessage("§cCe chunk est déjà claim !");
             return;
         }
 
-        if(main.getChunkManager().getClaimer(chunk).equals(clan)){
+        if(main.getChunkManager().getChunks().getClaimer(chunk.toString()).equals(clan)){
             player.sendMessage("§cCe chunk est déjà claim pas ce clan");
             return;
         }
 
-        main.getChunkManager().claimChunk(player, clan);
+        ClaimedChunks chunks = main.getChunkManager().getChunks();
+        chunks.claimChunk(chunk.toString(), clan);
+        main.getChunkManager().saveToFile(chunks);
+
         player.sendMessage("§aVous avez claim ce chunk pour le clan " + clan + " avec succès");
     }
 }

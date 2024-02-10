@@ -1,12 +1,14 @@
 package fr.erased.clans.commands.subcommands.admin;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.PlayerManager;
-import fr.erased.clans.manager.enums.PlayerRank;
-import fr.erased.clans.utils.FileUtils;
+import fr.erased.clans.clans.Clan;
+import fr.erased.clans.players.ClanPlayer;
+import fr.erased.clans.players.PlayerRank;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class ForceSetLeadCommand {
 
@@ -25,24 +27,33 @@ public class ForceSetLeadCommand {
             return;
         }
 
-        String lead = args.getArgs(0);
+        String target = args.getArgs(0);
 
-        PlayerManager leadManager = null;
-        try {
-            //TODO leadManager = new PlayerManager(main, lead);
-        } catch (Exception e){
+        ClanPlayer targetManager = main.getPlayerManager().getPlayer(target);
+
+        if(targetManager == null){
             player.sendMessage("§cCe joueur n'existe pas");
             return;
         }
-
-        if(leadManager.getPlayerRank() == PlayerRank.CHEF){
+        if(targetManager.getRank() == PlayerRank.CHEF){
             player.sendMessage("§cCe joueur est déjà le chef du clan !");
             return;
         }
 
-        //TODO: for every player, remove the chef
+        Clan targetClan = main.getClanManager().getClan(targetManager.getClan());
+        for(UUID uuid : targetClan.getMembers()){
+            ClanPlayer clanPlayer = main.getPlayerManager().getPlayer(uuid);
 
-        leadManager.setPlayerRank(PlayerRank.CHEF);
-        player.sendMessage("§aVous avez mis " + lead + " en tant que chef de ce clan. Attention, l'ancien chef de clan est passé officier");
+            if(clanPlayer.getRank() == PlayerRank.CHEF){
+                clanPlayer.setRank(PlayerRank.OFFICIER);
+                main.getPlayerManager().savePlayer(clanPlayer);
+                break;
+            }
+        }
+
+        targetManager.setRank(PlayerRank.CHEF);
+        main.getPlayerManager().savePlayer(targetManager);
+
+        player.sendMessage("§aVous avez mis " + target + " en tant que chef de ce clan. Attention, l'ancien chef de clan est passé officier");
     }
 }

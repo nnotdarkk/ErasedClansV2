@@ -1,15 +1,12 @@
 package fr.erased.clans.commands.subcommands;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.PlayerManager;
-import fr.erased.clans.manager.enums.PlayerRank;
+import fr.erased.clans.players.ClanPlayer;
+import fr.erased.clans.players.PlayerRank;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-
-import java.util.Objects;
 
 public class PromoteCommand {
 
@@ -22,14 +19,14 @@ public class PromoteCommand {
     @Command(name = "clan.promote")
     public void onCommand(CommandArgs args) {
         Player player = args.getPlayer();
-        PlayerManager playerManager = new PlayerManager(main, player);
+        ClanPlayer clanPlayer = main.getPlayerManager().getPlayer(player.getUniqueId());
 
-        if (playerManager.getClan().equals("null")) {
+        if (!clanPlayer.inClan()) {
             player.sendMessage("§cVous n'êtes pas dans un clan !");
             return;
         }
 
-        if (playerManager.getPlayerRank() != PlayerRank.CHEF) {
+        if (clanPlayer.getRank() != PlayerRank.CHEF) {
             player.sendMessage("§cVous n'avez pas la permission requise. (CHEF)");
             return;
         }
@@ -47,38 +44,37 @@ public class PromoteCommand {
             return;
         }
 
-        OfflinePlayer offlineTarget = Bukkit.getOfflinePlayer(target);
-        Bukkit.broadcastMessage(Objects.requireNonNull(offlineTarget.getName()));
-        Bukkit.broadcastMessage(String.valueOf(offlineTarget.getUniqueId()));
-        PlayerManager targetManager = new PlayerManager(main, offlineTarget.getUniqueId());
-        Player targetPlayer = Bukkit.getPlayer(target);
+        ClanPlayer targetClanPlayer = main.getPlayerManager().getPlayer(target);
 
-        if(targetManager.notExists()){
-            player.sendMessage("§cCe joueur n'existe pas");
+        if(targetClanPlayer == null){
+            player.sendMessage("§cCe joueur n'exsite pas");
             return;
         }
 
+        Player targetPlayer = Bukkit.getPlayer(target);
 
-        if (!targetManager.getClan().equals(playerManager.getClan())) {
+        if (!targetClanPlayer.getClan().equals(clanPlayer.getClan())) {
             player.sendMessage("§cCe joueur n'est pas dans votre clan");
             return;
         }
 
-        switch (targetManager.getPlayerRank()) {
+        switch (targetClanPlayer.getRank()) {
             case CHEF:
                 break;
             case OFFICIER:
                 player.sendMessage("§cCe joueur est déjà officier");
                 break;
             case MEMBRE:
-                targetManager.setPlayerRank(PlayerRank.OFFICIER);
+                targetClanPlayer.setRank(PlayerRank.OFFICIER);
+                main.getPlayerManager().savePlayer(targetClanPlayer);
                 player.sendMessage("§a§l» §7Vous avez promu §e" + target + " §7en officier");
                 if(targetPlayer != null){
                     targetPlayer.sendMessage("§a§l» §7Vous avez été promu officier par §e" + player.getName());
                 }
                 break;
             case RECRUE:
-                targetManager.setPlayerRank(PlayerRank.MEMBRE);
+                targetClanPlayer.setRank(PlayerRank.MEMBRE);
+                main.getPlayerManager().savePlayer(targetClanPlayer);
                 player.sendMessage("§a§l» §7Vous avez promu §e" + target + " §7en membre");
                 if(targetPlayer != null){
                     targetPlayer.sendMessage("§a§l» §7Vous avez été promu membre par §e" + player.getName());

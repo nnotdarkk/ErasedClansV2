@@ -20,15 +20,16 @@ public class ClanCompleter {
             list.add("create");
             list.add("demote");
             list.add("fly");
+            list.add("help");
             list.add("invite");
             list.add("join");
+            list.add("kick");
             list.add("promote");
             list.add("quit");
             list.add("refuse");
             list.add("setbase");
             list.add("unclaim");
             list.add("unclaimall");
-            list.add("kick");
 
             if (args.getPlayer().hasPermission("clans.admin")) {
                 list.add("admin");
@@ -39,20 +40,23 @@ public class ClanCompleter {
         if (args.getPlayer().hasPermission("clans.admin")) {
             if (args.getArgs(0).equalsIgnoreCase("admin")) {
                 if (args.getArgs().length == 2) {
+                    list.add("addclanxp");
                     list.add("bypassclaims");
                     list.add("claninfo");
-                    list.add("playerinfo");
-                    list.add("forcekick");
-                    list.add("forcepromote");
-                    list.add("forcedemote");
                     list.add("forceclaim");
-                    list.add("forceunclaim");
-                    list.add("forceunclaimall");
-                    list.add("teleportbase");
-                    list.add("setclanxp");
-                    list.add("addclanxp");
-                    list.add("setbase");
+                    list.add("forcedemote");
+                    list.add("forcejoin");
+                    list.add("forcekick");
                     list.add("forceopenchest");
+                    list.add("forcepromote");
+                    list.add("forcesetbase");
+                    list.add("forcesetlead");
+                    list.add("forceunclaimall");
+                    list.add("forceunclaim");
+                    list.add("playerinfo");
+                    list.add("setclanxp");
+                    list.add("teleportbase");
+
                     return list;
                 }
             }

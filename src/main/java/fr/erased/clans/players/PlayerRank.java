@@ -1,4 +1,4 @@
-package fr.erased.clans.player;
+package fr.erased.clans.players;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,2 +1,4 @@
-package fr.erased.clans.events;public class ClanLevelGainEvent {
+package fr.erased.clans.events;
+
+public class ClanLevelGainEvent {
 }

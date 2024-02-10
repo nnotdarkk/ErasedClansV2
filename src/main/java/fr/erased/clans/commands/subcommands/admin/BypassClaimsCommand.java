@@ -1,7 +1,7 @@
 package fr.erased.clans.commands.subcommands.admin;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.PlayerManager;
+import fr.erased.clans.players.cache.CacheManager;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.entity.Player;
@@ -23,13 +23,13 @@ public class BypassClaimsCommand {
             return;
         }
 
-        PlayerManager playerManager = new PlayerManager(main, player);
+        CacheManager cacheManager = main.getCacheManager();
 
-        if(playerManager.isBypassClaims()){
-            playerManager.removeBypassClaims();
+        if(cacheManager.isBypassClaims(player.getUniqueId())){
+            cacheManager.removeBypassClaims(player.getUniqueId());
             player.sendMessage("§cVous ne possédez plus le bypass des claims");
         } else {
-            playerManager.addBypassClaims();
+            cacheManager.addBypassClaims(player.getUniqueId());
             player.sendMessage("§aVous possédez maintenant le bypass des claims");
         }
     }

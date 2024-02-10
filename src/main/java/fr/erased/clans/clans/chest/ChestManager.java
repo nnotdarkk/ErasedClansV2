@@ -1,4 +1,4 @@
-package fr.erased.clans.chests;
+package fr.erased.clans.clans.chest;
 
 import fr.erased.clans.ErasedClans;
 import fr.erased.clans.clans.Clan;
@@ -64,7 +64,9 @@ public class ChestManager {
     public Inventory removeGlass(Inventory inv) {
         for (int i = 9; i < 54; i++) {
             if (inv.getItem(i) == null) continue;
-            if (inv.getItem(i).getType().equals(Material.GRAY_STAINED_GLASS_PANE)) {
+            if (inv.getItem(i).getItemMeta() == null) continue;
+
+            if (inv.getItem(i).getItemMeta().getDisplayName().startsWith("§c")) {
                 inv.setItem(i, null);
             }
         }

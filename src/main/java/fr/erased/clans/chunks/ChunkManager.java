@@ -1,4 +1,4 @@
-package fr.erased.clans.chunk;
+package fr.erased.clans.chunks;
 
 import fr.erased.clans.ErasedClans;
 import fr.erased.clans.utils.FileContentUtils;

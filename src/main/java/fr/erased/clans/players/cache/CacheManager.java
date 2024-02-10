@@ -1,6 +1,5 @@
-package fr.erased.clans.cache;
+package fr.erased.clans.players.cache;
 
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 import java.util.*;

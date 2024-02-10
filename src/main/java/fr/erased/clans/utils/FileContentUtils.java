@@ -4,26 +4,28 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
-public class FileContentReader {
+public final class FileContentUtils {
 
-    private final File file;
 
-    public FileContentReader(File file) {
-        this.file = file;
-    }
-
-    public String getFileContent() {
+    public static String getFileContent(File file) {
         String result = "";
         try {
-            result = FileUtils.readFileToString(this.file, "UTF-8");
+            result = FileUtils.readFileToString(file, "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    public void 
+    public static void setFileContent(File file, String string){
+        try {
+            FileUtils.writeStringToFile(file, string, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 

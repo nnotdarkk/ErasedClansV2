@@ -4,16 +4,16 @@ import fr.erased.clans.ErasedClans;
 
 import java.io.File;
 
-public class FileUtils {
+public class EFileUtils {
 
     private final ErasedClans main;
 
-    public FileUtils(ErasedClans main) {
+    public EFileUtils(ErasedClans main) {
         this.main = main;
     }
 
     public void createFile(String folder, String filename) {
-        File file = new File(main.getDataFolder() + File.separator + folder + File.separator + filename + ".yml");
+        File file = new File(main.getDataFolder() + File.separator + folder + File.separator + filename + ".json");
 
         if (!file.exists()) {
             try {
@@ -25,7 +25,7 @@ public class FileUtils {
     }
 
     public void removeFile(String folder, String filename) {
-        File file = new File(main.getDataFolder() + File.separator + folder + File.separator + filename + ".yml");
+        File file = new File(main.getDataFolder() + File.separator + folder + File.separator + filename + ".json");
 
         if (file.exists()) {
             file.delete();
@@ -33,7 +33,7 @@ public class FileUtils {
     }
 
     public File getFile(String folder, String filename) {
-        return new File(main.getDataFolder() + File.separator + folder + File.separator + filename + ".yml");
+        return new File(main.getDataFolder() + File.separator + folder + File.separator + filename + ".json");
     }
 
     public void createFolder(String folderName) {

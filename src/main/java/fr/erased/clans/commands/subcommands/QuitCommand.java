@@ -1,8 +1,8 @@
 package fr.erased.clans.commands.subcommands;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.PlayerManager;
-import fr.erased.clans.invetory.ClanUI;
+import fr.erased.clans.clans.inventory.ClanInventory;
+import fr.erased.clans.players.ClanPlayer;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.entity.Player;
@@ -18,14 +18,14 @@ public class QuitCommand {
     @Command(name = "clan.quit")
     public void onCommand(CommandArgs args) {
         Player player = args.getPlayer();
-        PlayerManager playerManager = new PlayerManager(main, player);
+        ClanPlayer clanPlayer = main.getPlayerManager().getPlayer(player.getUniqueId());
 
-        if (!playerManager.inClan()) {
+        if (!clanPlayer.inClan()) {
             player.sendMessage("§cVous n'êtes pas dans un clan");
             return;
         }
 
-        ClanUI clanUI = new ClanUI(player, main, playerManager.getClan());
+        ClanInventory clanUI = new ClanInventory(player, main, clanPlayer.getClan());
         clanUI.quitClanUi();
     }
 }

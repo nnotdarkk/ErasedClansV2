@@ -1,9 +1,9 @@
 package fr.erased.clans.commands.subcommands;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.ChestManager;
-import fr.erased.clans.manager.PlayerManager;
-import fr.erased.clans.manager.enums.PlayerRank;
+import fr.erased.clans.clans.Clan;
+import fr.erased.clans.players.ClanPlayer;
+import fr.erased.clans.players.PlayerRank;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.Bukkit;
@@ -20,26 +20,26 @@ public class ChestCommand {
     @Command(name = "clan.chest")
     public void onCommand(CommandArgs args) {
         Player player = args.getPlayer();
-        PlayerManager playerManager = new PlayerManager(main, player);
+        ClanPlayer clanPlayer = main.getPlayerManager().getPlayer(player.getUniqueId());
 
-        if (playerManager.getClan().equals("null")) {
+        if (clanPlayer.getClan() == null) {
             player.sendMessage("§cVous n'êtes pas dans un clan !");
             return;
         }
 
-        if (playerManager.getPlayerRank() == PlayerRank.RECRUE) {
+        if (clanPlayer.getRank() == PlayerRank.RECRUE) {
             player.sendMessage("§cVous n'avez pas la permission requise. (MEMBRE)");
             return;
         }
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.getOpenInventory().getTitle().equals("Coffre du clan: " + playerManager.getClan())) {
+            if (p.getOpenInventory().getTitle().equals("Coffre du clan: " + clanPlayer.getClan())) {
                 player.sendMessage("§cVotre coffre de clan est déjà ouvert par un autre membre du clan.");
                 return;
             }
         }
 
-        ChestManager chestManager = new ChestManager(main, player);
-        chestManager.openChest();
+        Clan clan = main.getClanManager().getClan(clanPlayer.getClan());
+        main.getChestManager().openChest(player, clan);
     }
 }

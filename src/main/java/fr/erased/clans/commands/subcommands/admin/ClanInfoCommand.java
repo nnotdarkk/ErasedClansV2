@@ -1,10 +1,8 @@
 package fr.erased.clans.commands.subcommands.admin;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.ClanManager;
-import fr.erased.clans.manager.PlayerManager;
+import fr.erased.clans.clans.Clan;
 import fr.erased.clans.utils.ExpUtils;
-import fr.erased.clans.utils.FileUtils;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.Location;
@@ -29,30 +27,30 @@ public class ClanInfoCommand {
             return;
         }
 
-        String clan = args.getArgs(0);
+        String clanName = args.getArgs(0);
 
-        if (!new FileUtils(main).getFile("clans", clan).exists()) {
+        if (main.getFileUtils().getFile("clans", clanName).exists()) {
             player.sendMessage("§cCe clan n'existe pas !");
             return;
         }
 
-        ClanManager clanManager = new ClanManager(main, clan);
+        Clan clan = main.getClanManager().getClan(clanName);
 
-        player.sendMessage("§7Informations sur le clan: §e" + clan);
+        player.sendMessage("§7Informations sur le clan: §e" + clan.getName());
 
-        player.sendMessage(" §8▪ §7Chef du clan: §e" + new PlayerManager(main, UUID.fromString(clanManager.getOwner())).getName());
-        player.sendMessage(" §8▪ §7XP du clan: §e" + clanManager.getClanXp());
-        ExpUtils expUtils = new ExpUtils(clanManager.getClanXp());
-        player.sendMessage(" §8▪ §7Niveau du clan: §e" + clanManager.getClanLevel()
+        player.sendMessage(" §8▪ §7Chef du clan: §e" + main.getPlayerManager().getPlayer(clan.getOwner()).getName());
+        player.sendMessage(" §8▪ §7XP du clan: §e" + clan.getXp());
+        ExpUtils expUtils = new ExpUtils(clan.getXp());
+        player.sendMessage(" §8▪ §7Niveau du clan: §e" + expUtils.getLevel()
                 + " §7(" + expUtils.getActualExp() + "/" + expUtils.getActualExpToNextLevel() + ")");
         player.sendMessage(" §8▪ §7Membres du clan: §e");
 
-        for (String member : clanManager.getMembers()) {
-            player.sendMessage(" §7- §e" + new PlayerManager(main, UUID.fromString(member)).getName());
+        for (UUID member : clan.getMembers()) {
+            player.sendMessage(" §7- §e" + main.getPlayerManager().getPlayer(member).getName());
         }
 
-        if(clanManager.getClanBase() != null){
-            Location location = clanManager.getClanBase();
+        if(clan.getBase() != null){
+            Location location = clan.getBase();
             player.sendMessage(" §8▪ §7Base du clan: §ex:"
                     + (int) location.getX() + "/y:"
                     + (int) location.getY() + "/z:"
@@ -64,11 +62,11 @@ public class ClanInfoCommand {
         }
 
 
-        for (String chunk : clanManager.getClaims()) {
+        for (String chunk : clan.getClaims()) {
             player.sendMessage(" §7- §e" + chunk);
         }
 
-        player.sendMessage(" §8▪ §7Statut du clan: §e" + clanManager.getClanStatus());
+        player.sendMessage(" §8▪ §7Statut du clan: §e" + clan.getClanStatus());
 
     }
 }

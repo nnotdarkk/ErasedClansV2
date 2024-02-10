@@ -1,8 +1,8 @@
 package fr.erased.clans.commands.subcommands;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.ClanManager;
-import fr.erased.clans.manager.PlayerManager;
+import fr.erased.clans.clans.Clan;
+import fr.erased.clans.players.ClanPlayer;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.Bukkit;
@@ -19,8 +19,7 @@ public class RefuseCommand {
     @Command(name = "clan.refuse")
     public void onCommand(CommandArgs args) {
         Player player = args.getPlayer();
-        PlayerManager playerManager = new PlayerManager(main, player);
-        ClanManager clanManager = new ClanManager(main, playerManager.getClan());
+        ClanPlayer playerManager = main.getPlayerManager().getPlayer(player.getUniqueId());
 
         if (args.getArgs().length != 1) {
             player.sendMessage("§c/clan refuse <clan>");
@@ -32,16 +31,16 @@ public class RefuseCommand {
             return;
         }
 
-        String clan = args.getArgs(0);
-        if (!clanManager.hasInvitation(player, clan)) {
+        String clanName = args.getArgs(0);
+        if (!main.getCacheManager().hasInvitation(player.getUniqueId(), clanName)) {
             player.sendMessage("§cVous n'avez pas d'invitation pour ce clan");
             return;
         }
 
-        ClanManager manager = new ClanManager(main, clan);
-        manager.removeInvitation(player);
-        player.sendMessage("§cVous avez refusé l'invitation du clan " + clan);
-        Player owner = Bukkit.getPlayer(manager.getOwner());
+        Clan clan = main.getClanManager().getClan(clanName);
+        main.getCacheManager().removeInvitation(clanName, player.getUniqueId());
+        player.sendMessage("§cVous avez refusé l'invitation du clan " + clanName);
+        Player owner = Bukkit.getPlayer(clan.getOwner());
         if (owner != null) {
             owner.sendMessage("§c" + player.getName() + " a refusé votre invitation");
         }

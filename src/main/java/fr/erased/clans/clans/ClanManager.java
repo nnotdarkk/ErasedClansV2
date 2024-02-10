@@ -1,4 +1,4 @@
-package fr.erased.clans.clan;
+package fr.erased.clans.clans;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

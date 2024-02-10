@@ -1,11 +1,11 @@
 package fr.erased.clans.commands.subcommands.admin;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.PlayerManager;
-import fr.erased.clans.manager.enums.PlayerRank;
-import fr.erased.clans.utils.FileUtils;
+import fr.erased.clans.players.ClanPlayer;
+import fr.erased.clans.players.PlayerRank;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class ForcePromoteCommand {
@@ -27,28 +27,36 @@ public class ForcePromoteCommand {
 
         String promoted = args.getArgs(0);
 
-        PlayerManager promotedManager = null;
-        try {
-            //TODO promotedManager = new PlayerManager(main, promoted);
-        } catch (Exception e){
-            player.sendMessage("§cCe joueur n'existe pas");
+        ClanPlayer clanPlayer = main.getPlayerManager().getPlayer(promoted);
+
+        if(clanPlayer == null){
+            player.sendMessage("§cCe clan n'existe pas !");
             return;
         }
 
-        switch (promotedManager.getPlayerRank()) {
+        Player targetPlayer = Bukkit.getPlayer(promoted);
+
+        switch (clanPlayer.getRank()) {
             case CHEF:
-                player.sendMessage("§cCe joueur est déjà chef");
                 break;
             case OFFICIER:
-                player.sendMessage("§cImpossible de mettre quelqu'un admin avec cette commande, utilisez /clan admin forcesetlead <player>");
+                player.sendMessage("§cCe joueur est déjà officier");
                 break;
             case MEMBRE:
-                promotedManager.setPlayerRank(PlayerRank.OFFICIER);
-                player.sendMessage("§aVous avez promu " + player.getName() + " en officier");
+                clanPlayer.setRank(PlayerRank.OFFICIER);
+                main.getPlayerManager().savePlayer(clanPlayer);
+                player.sendMessage("§a§l» §7Vous avez promu §e" + promoted + " §7en officier");
+                if(targetPlayer != null){
+                    targetPlayer.sendMessage("§a§l» §7Vous avez été promu officier par §e" + player.getName());
+                }
                 break;
             case RECRUE:
-                promotedManager.setPlayerRank(PlayerRank.MEMBRE);
-                player.sendMessage("§aVous avez promu " + player.getName() + " en membre");
+                clanPlayer.setRank(PlayerRank.MEMBRE);
+                main.getPlayerManager().savePlayer(clanPlayer);
+                player.sendMessage("§a§l» §7Vous avez promu §e" + promoted + " §7en membre");
+                if(targetPlayer != null){
+                    targetPlayer.sendMessage("§a§l» §7Vous avez été promu membre par §e" + player.getName());
+                }
                 break;
         }
     }

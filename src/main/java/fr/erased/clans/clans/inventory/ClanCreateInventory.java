@@ -1,4 +1,4 @@
-package fr.erased.clans.clan.inventory;
+package fr.erased.clans.clans.inventory;
 
 import fr.erased.clans.ErasedClans;
 import fr.erased.clans.utils.ItemBuilder;

@@ -1,4 +1,4 @@
-package fr.erased.clans.player;
+package fr.erased.clans.players;
 
 import fr.erased.clans.utils.json.JsonSeriazible;
 import lombok.AllArgsConstructor;

@@ -1,9 +1,9 @@
 package fr.erased.clans.commands.subcommands;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.ClanManager;
-import fr.erased.clans.manager.PlayerManager;
-import fr.erased.clans.manager.enums.PlayerRank;
+import fr.erased.clans.clans.Clan;
+import fr.erased.clans.players.ClanPlayer;
+import fr.erased.clans.players.PlayerRank;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.entity.Player;
@@ -19,24 +19,24 @@ public class BaseCommand {
     @Command(name = "clan.base")
     public void onCommand(CommandArgs args) {
         Player player = args.getPlayer();
-        PlayerManager playerManager = new PlayerManager(main, player);
-        ClanManager clanManager = new ClanManager(main, playerManager.getClan());
+        ClanPlayer clanPlayer = main.getPlayerManager().getPlayer(player.getUniqueId());
+        Clan clan = main.getClanManager().getClan(clanPlayer.getClan());
 
-        if (playerManager.getClan().equals("null")) {
+        if (clanPlayer.getClan() == null) {
             player.sendMessage("§cVous n'êtes pas dans un clan !");
             return;
         }
 
-        if (playerManager.getPlayerRank() == PlayerRank.RECRUE) {
+        if (clanPlayer.getRank() == PlayerRank.RECRUE) {
             player.sendMessage("§cVous n'avez pas la permission requise. (MEMBRE)");
             return;
         }
 
-        if (clanManager.getClanBase() == null) {
+        if (clan.getBase() == null) {
             player.sendMessage("§cVotre clan n'a pas encore de base !");
             return;
         }
 
-        player.teleport(clanManager.getClanBase());
+        player.teleport(clan.getBase());
     }
 }

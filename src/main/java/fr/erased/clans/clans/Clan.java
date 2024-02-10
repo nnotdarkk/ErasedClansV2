@@ -1,4 +1,4 @@
-package fr.erased.clans.clan;
+package fr.erased.clans.clans;
 
 import fr.erased.clans.leaderboard.data.LeaderboardData;
 import fr.erased.clans.quests.data.QuestData;

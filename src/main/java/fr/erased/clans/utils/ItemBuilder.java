@@ -1,6 +1,7 @@
 package fr.erased.clans.utils;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -11,8 +12,8 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
 public class ItemBuilder {
 
     private final ItemStack is;
@@ -29,6 +30,10 @@ public class ItemBuilder {
         is = new ItemStack(m, amount);
     }
 
+    public ItemBuilder(Material m, int amount, int meta){
+        is = new ItemStack(m, amount, (short) meta);
+    }
+
     public ItemBuilder(Material m, int amount, short meta) {
         is = new ItemStack(m, amount, meta);
     }
@@ -37,8 +42,20 @@ public class ItemBuilder {
         return new ItemBuilder(is);
     }
 
+    public ItemBuilder setMaterial(Material material) {
+        is.setType(material);
+        return this;
+    }
+
     public ItemBuilder setDurability(short dur) {
         is.setDurability(dur);
+        return this;
+    }
+
+    public ItemBuilder setInfinityDurability() {
+        final ItemMeta meta = this.is.getItemMeta();
+        meta.setUnbreakable(true);
+        this.is.setItemMeta(meta);
         return this;
     }
 
@@ -59,16 +76,6 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setSkullOwner(String owner) {
-        try {
-            SkullMeta im = (SkullMeta) is.getItemMeta();
-            im.setOwner(owner);
-            is.setItemMeta(im);
-        } catch (ClassCastException expected) {
-        }
-        return this;
-    }
-
     public ItemBuilder addEnchant(Enchantment ench, int level) {
         ItemMeta im = is.getItemMeta();
         im.addEnchant(ench, level, true);
@@ -76,10 +83,13 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setInfinityDurability() {
-        final ItemMeta meta = this.is.getItemMeta();
-        meta.setUnbreakable(true);
-        this.is.setItemMeta(meta);
+    public ItemBuilder setSkullOwner(String owner) {
+        try {
+            SkullMeta im = (SkullMeta) is.getItemMeta();
+            im.setOwner(owner);
+            is.setItemMeta(im);
+        } catch (ClassCastException expected) {
+        }
         return this;
     }
 
@@ -91,7 +101,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setLoreWithList(List<String> lore) {
-        final List<String> toSet = new ArrayList<>();
+        final List<String> toSet = new ArrayList<String>();
         final ItemMeta meta = this.is.getItemMeta();
         for (final String string : lore) {
             toSet.add(ChatColor.translateAlternateColorCodes('&', string));
@@ -101,13 +111,28 @@ public class ItemBuilder {
         return this;
     }
 
-    @SuppressWarnings("deprecation")
+    public ItemBuilder setLoreWithList(String... lore){
+        return setLoreWithList(Arrays.asList(lore));
+    }
+
+    public ItemBuilder addLore(String lore) {
+        ItemMeta im = is.getItemMeta();
+        List<String> loreList = im.getLore();
+        if (loreList == null) {
+            loreList = new ArrayList<>();
+        }
+        loreList.add(lore);
+        im.setLore(loreList);
+        is.setItemMeta(im);
+        return this;
+    }
+
     public ItemBuilder setWoolColor(DyeColor color) {
         this.is.setDurability(color.getWoolData());
         return this;
     }
 
-    public ItemBuilder setLeatherArmorColor(org.bukkit.Color color) {
+    public ItemBuilder setLeatherArmorColor(Color color) {
         try {
             LeatherArmorMeta im = (LeatherArmorMeta) is.getItemMeta();
             im.setColor(color);
@@ -117,15 +142,16 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemStack build() {
+        return this.build(false);
+    }
+
     public ItemStack build(Boolean showItemInfo) {
         ItemMeta im = this.is.getItemMeta();
         if (!showItemInfo) {
-            im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-            im.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-            im.addItemFlags(ItemFlag.HIDE_DESTROYS);
-            im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            im.addItemFlags(ItemFlag.HIDE_PLACED_ON);
-            im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+            for (ItemFlag flag : ItemFlag.values()) {
+                im.addItemFlags(flag);
+            }
             this.is.setItemMeta(im);
         }
         return is;

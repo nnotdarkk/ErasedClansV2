@@ -1,8 +1,7 @@
 package fr.erased.clans.commands.subcommands.admin;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.ClanManager;
-import fr.erased.clans.utils.FileUtils;
+import fr.erased.clans.clans.Clan;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.Bukkit;
@@ -25,23 +24,24 @@ public class ForceOpenChestCommand {
             return;
         }
 
-        String clan = args.getArgs(0);
+        String clanName = args.getArgs(0);
 
-        if (!new FileUtils(main).getFile("clans", clan).exists()) {
+        if (main.getFileUtils().getFile("clans", clanName).exists()) {
             player.sendMessage("§cCe clan n'existe pas !");
             return;
         }
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.getOpenInventory().getTitle().equals("Coffre du clan: " + clan)) {
+            if (p.getOpenInventory().getTitle().equals("Coffre du clan: " + clanName)) {
                 p.closeInventory();
                 p.sendMessage("§cCe coffre est entrain de se faire éditer par un administrateur.");
                 break;
             }
         }
 
-        ClanManager clanManager = new ClanManager(main, clan);
-        player.openInventory(clanManager.getClanChest());
-        player.sendMessage("§aVous avez ouvert le coffre du clan " + clan);
+        Clan clan = main.getClanManager().getClan(clanName);
+        main.getChestManager().openChest(player, clan);
+
+        player.sendMessage("§aVous avez ouvert le coffre du clan " + clanName);
     }
 }

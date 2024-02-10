@@ -1,8 +1,8 @@
-package fr.erased.clans.clan.inventory;
+package fr.erased.clans.clans.inventory;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.clan.Clan;
-import fr.erased.clans.player.ClanPlayer;
+import fr.erased.clans.clans.Clan;
+import fr.erased.clans.players.ClanPlayer;
 import fr.erased.clans.utils.ExpUtils;
 import fr.erased.clans.utils.IntUtils;
 import fr.erased.clans.utils.ItemBuilder;

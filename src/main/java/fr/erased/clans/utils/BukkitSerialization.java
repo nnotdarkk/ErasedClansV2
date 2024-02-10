@@ -1,5 +1,6 @@
-package fr.atlanfish.core.tools;
+package fr.erased.clans.utils;
 
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -11,9 +12,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class BukkitSerialization {
+public final class BukkitSerialization {
 
-    public String toBase64(Inventory inventory) throws IllegalStateException {
+    public static String toBase64(Inventory inventory) throws IllegalStateException {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
@@ -28,7 +29,8 @@ public class BukkitSerialization {
         }
     }
 
-    public Inventory fromBase64(String data) throws IOException {
+    @SneakyThrows
+    public static Inventory fromBase64(String data) {
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);

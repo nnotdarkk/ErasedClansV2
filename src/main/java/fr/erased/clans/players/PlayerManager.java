@@ -1,4 +1,4 @@
-package fr.erased.clans.player;
+package fr.erased.clans.players;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -7,7 +7,6 @@ import fr.erased.clans.utils.json.Defaulteable;
 import fr.erased.clans.utils.json.JsonResolver;
 import fr.erased.clans.utils.json.JsonSeriazible;
 import fr.erased.clans.utils.FileContentUtils;
-import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.io.IOException;

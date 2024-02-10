@@ -1,8 +1,8 @@
 package fr.erased.clans.commands.subcommands;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.PlayerManager;
-import fr.erased.clans.invetory.CreateUI;
+import fr.erased.clans.clans.inventory.ClanCreateInventory;
+import fr.erased.clans.players.ClanPlayer;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.entity.Player;
@@ -18,14 +18,14 @@ public class CreateCommand {
     @Command(name = "clan.create")
     public void onCommand(CommandArgs args) {
         Player player = args.getPlayer();
-        PlayerManager playerManager = new PlayerManager(main, player);
+        ClanPlayer clanPlayer = main.getPlayerManager().getPlayer(player.getUniqueId());
 
-        if (playerManager.inClan()) {
+        if (clanPlayer.inClan()) {
             player.sendMessage("§cVous êtes déjà dans un clan");
             return;
         }
 
-        CreateUI createUI = new CreateUI(player, main);
+        ClanCreateInventory createUI = new ClanCreateInventory(player, main);
         createUI.openCreateUI();
     }
 }

@@ -1,8 +1,7 @@
 package fr.erased.clans.commands.subcommands.admin;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.ClanManager;
-import fr.erased.clans.utils.FileUtils;
+import fr.erased.clans.clans.Clan;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.entity.Player;
@@ -26,10 +25,10 @@ public class SetClanXpCommand {
             return;
         }
 
-        String clan = args.getArgs(0);
+        String clanName = args.getArgs(0);
         String xp = args.getArgs(1);
 
-        if (!new FileUtils(main).getFile("clans", clan).exists()) {
+        if (main.getFileUtils().getFile("clans", clanName).exists()) {
             player.sendMessage("§cCe clan n'existe pas !");
             return;
         }
@@ -42,8 +41,10 @@ public class SetClanXpCommand {
 
         int xpInt = Integer.parseInt(xp);
 
-        ClanManager clanManager = new ClanManager(main, clan);
-        clanManager.setClanXp(xpInt);
-        player.sendMessage("§aVous avez mis l'xp du clan " + clan + " à " + xpInt + "xp");
+        Clan clan = main.getClanManager().getClan(clanName);
+
+        clan.setXp(xpInt);
+        main.getClanManager().saveClan(clan);
+        player.sendMessage("§aVous avez mis l'xp du clan " + clanName + " à " + xpInt + "xp");
     }
 }

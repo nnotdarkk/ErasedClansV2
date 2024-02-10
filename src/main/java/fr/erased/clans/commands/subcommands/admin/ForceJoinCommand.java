@@ -1,9 +1,9 @@
 package fr.erased.clans.commands.subcommands.admin;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.ClanManager;
-import fr.erased.clans.manager.PlayerManager;
-import fr.erased.clans.utils.FileUtils;
+import fr.erased.clans.clans.Clan;
+import fr.erased.clans.players.ClanPlayer;
+import fr.erased.clans.players.PlayerRank;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.entity.Player;
@@ -25,28 +25,32 @@ public class ForceJoinCommand {
             return;
         }
 
-        String clan = args.getArgs(0);
+        String clanName = args.getArgs(0);
         String target = args.getArgs(1);
 
-        if (!new FileUtils(main).getFile("clans", clan).exists()) {
+        if (main.getFileUtils().getFile("clans", clanName).exists()) {
             player.sendMessage("§cCe clan n'existe pas !");
             return;
         }
 
-        PlayerManager targetManager = null;
-        try {
-            //TODO targetManager = new PlayerManager(main, target);
-        } catch (Exception e){
-            player.sendMessage("§cCe joueur n'existe pas");
+        ClanPlayer clanPlayer = main.getPlayerManager().getPlayer(target);
+
+        if(clanPlayer == null){
+            player.sendMessage("§cCe joueur n'existe pas !");
             return;
         }
 
-        if(targetManager.getClan().equals("null")){
+        if(clanPlayer.getClan().equals("null")){
             player.sendMessage("§cCe joueur est déjà dans un clan !");
             return;
         }
 
-        ClanManager clanManager = new ClanManager(main, clan);
-        clanManager.addMember(targetManager);
+        Clan clan = main.getClanManager().getClan(clanName);
+        clan.addMember(clanPlayer.getUuid());
+        main.getClanManager().saveClan(clan);
+
+        clanPlayer.setClan(clan.getName());
+        clanPlayer.setRank(PlayerRank.RECRUE);
+        main.getPlayerManager().savePlayer(clanPlayer);
     }
 }

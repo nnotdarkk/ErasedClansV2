@@ -1,11 +1,10 @@
-package fr.erased.clans.chunk;
+package fr.erased.clans.chunks;
 
-import fr.erased.clans.clan.Clan;
+import fr.erased.clans.clans.Clan;
 import fr.erased.clans.utils.json.JsonSeriazible;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Chunk;
 
 import java.util.List;
 import java.util.Map;

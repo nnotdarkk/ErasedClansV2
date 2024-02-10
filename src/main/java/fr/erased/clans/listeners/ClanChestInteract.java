@@ -1,8 +1,8 @@
 package fr.erased.clans.listeners;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.ChestManager;
-import fr.erased.clans.manager.ClanManager;
+import fr.erased.clans.clans.Clan;
+import fr.erased.clans.utils.BukkitSerialization;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +20,7 @@ public class ClanChestInteract implements Listener {
     }
 
     @EventHandler
-    public void event(InventoryClickEvent e) {
+    public void onInventoryClick(InventoryClickEvent e) {
         if (e.getCurrentItem() == null) return;
         if (e.getCurrentItem().getItemMeta() == null) return;
 
@@ -32,14 +32,14 @@ public class ClanChestInteract implements Listener {
     }
 
     @EventHandler
-    public void event(InventoryCloseEvent e) {
+    public void onInventoryClose(InventoryCloseEvent e) {
         if (e.getView().getTitle().startsWith("Coffre du clan:")) {
             String clanName = e.getView().getTitle().split(": ")[1];
             Player player = (Player) e.getPlayer();
-            ChestManager chestManager = new ChestManager(main, player);
-            Inventory inv = chestManager.removeGlass(e.getInventory());
-            ClanManager clanManager = new ClanManager(main, clanName);
-            clanManager.setClanChest(inv);
+            Inventory inv = main.getChestManager().removeGlass(e.getInventory());
+            Clan clan = main.getClanManager().getClan(clanName);
+            clan.setChest(BukkitSerialization.toBase64(inv));
+            main.getClanManager().saveClan(clan);
         }
     }
 }

@@ -1,8 +1,7 @@
 package fr.erased.clans.commands.subcommands.admin;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.ClanManager;
-import fr.erased.clans.utils.FileUtils;
+import fr.erased.clans.clans.Clan;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.Location;
@@ -25,16 +24,19 @@ public class ForceSetBaseCommand {
             return;
         }
 
-        String clan = args.getArgs(0);
+        String clanName = args.getArgs(0);
 
-        if (!new FileUtils(main).getFile("clans", clan).exists()) {
+        if (main.getFileUtils().getFile("clans", clanName).exists()) {
             player.sendMessage("§cCe clan n'existe pas !");
             return;
         }
 
         Location location = player.getLocation();
-        ClanManager clanManager = new ClanManager(main, clan);
-        clanManager.setClanBase(location);
-        player.sendMessage("§aVous avez défini la nouvelle base du clan " + clan);
+
+        Clan clan = main.getClanManager().getClan(clanName);
+        clan.setBase(location);
+        main.getClanManager().saveClan(clan);
+
+        player.sendMessage("§aVous avez défini la nouvelle base du clan " + clanName);
     }
 }

@@ -1,9 +1,9 @@
 package fr.erased.clans.commands.subcommands;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.ClanManager;
-import fr.erased.clans.manager.PlayerManager;
-import fr.erased.clans.manager.enums.PlayerRank;
+import fr.erased.clans.clans.Clan;
+import fr.erased.clans.players.ClanPlayer;
+import fr.erased.clans.players.PlayerRank;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.entity.Player;
@@ -19,25 +19,26 @@ public class SetBaseCommand {
     @Command(name = "clan.setbase")
     public void onCommand(CommandArgs args) {
         Player player = args.getPlayer();
-        PlayerManager playerManager = new PlayerManager(main, player);
-        ClanManager clanManager = new ClanManager(main, playerManager.getClan());
+        ClanPlayer clanPlayer = main.getPlayerManager().getPlayer(player.getUniqueId());
+        Clan clan = main.getClanManager().getClan(clanPlayer.getClan());
 
-        if (playerManager.getClan().equals("null")) {
+        if (clanPlayer.getClan() == null) {
             player.sendMessage("§cVous n'êtes pas dans un clan !");
             return;
         }
 
-        if (playerManager.getPlayerRank() == PlayerRank.RECRUE || playerManager.getPlayerRank() == PlayerRank.MEMBRE) {
+        if (clanPlayer.getRank() == PlayerRank.RECRUE || clanPlayer.getRank() == PlayerRank.MEMBRE) {
             player.sendMessage("§cVous n'avez pas la permission requise. (OFFICIER)");
             return;
         }
 
-        if (clanManager.getClanLevel() < 20) {
+        if (clan.getLevel() < 20) {
             player.sendMessage("§cVous devez être niveau 20 pour définir une base de clan");
             return;
         }
 
-        clanManager.setClanBase(player.getLocation());
+        clan.setBase(player.getLocation());
+        main.getClanManager().saveClan(clan);
         player.sendMessage("§a§l» §7Vous avez défini la base de votre clan avec succès");
     }
 }

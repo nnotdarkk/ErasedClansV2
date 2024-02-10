@@ -1,8 +1,9 @@
 package fr.erased.clans.commands.subcommands;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.ClanManager;
-import fr.erased.clans.manager.PlayerManager;
+import fr.erased.clans.clans.Clan;
+import fr.erased.clans.players.ClanPlayer;
+import fr.erased.clans.players.PlayerRank;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.Bukkit;
@@ -19,34 +20,40 @@ public class JoinCommand {
     @Command(name = "clan.join")
     public void onCommand(CommandArgs args) {
         Player player = args.getPlayer();
-        PlayerManager playerManager = new PlayerManager(main, player);
-        ClanManager clanManager = new ClanManager(main, playerManager.getClan());
+        ClanPlayer clanPlayer = main.getPlayerManager().getPlayer(player.getUniqueId());
 
         if (args.getArgs().length != 1) {
             player.sendMessage("§c/clan join <clan>");
             return;
         }
 
-        if (playerManager.inClan()) {
+        if (clanPlayer.inClan()) {
             player.sendMessage("§cVous êtes déjà dans un clan");
             return;
         }
 
-        String clan = args.getArgs(0);
-        if (!clanManager.hasInvitation(player, clan)) {
+        String clanName = args.getArgs(0);
+        if (!main.getCacheManager().hasInvitation(player.getUniqueId(), clanName)) {
             player.sendMessage("§cVous n'avez pas d'invitation pour ce clan");
             return;
         }
 
-        clanManager.removeInvitation(player);
+        main.getCacheManager().removeInvitation(clanName, player.getUniqueId());
 
-        ClanManager manager = new ClanManager(main, clan);
-        manager.addMember(playerManager);
+        Clan targetClan = main.getClanManager().getClan(clanName);
+        targetClan.addMember(player.getUniqueId());
+        main.getClanManager().saveClan(targetClan);
 
-        player.sendMessage("§aVous avez rejoint le clan " + clan);
-        Player player1 = Bukkit.getPlayer(manager.getOwner());
+        clanPlayer.setClan(clanName);
+        clanPlayer.setRank(PlayerRank.RECRUE);
+        main.getPlayerManager().savePlayer(clanPlayer);
+
+
+        player.sendMessage("§aVous avez rejoint le clan " + clanName);
+        Player player1 = Bukkit.getPlayer(targetClan.getOwner());
         if (player1 != null) {
             player1.sendMessage("§a" + player.getName() + " a accepté votre invitation");
         }
     }
+
 }

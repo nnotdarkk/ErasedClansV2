@@ -1,10 +1,11 @@
 package fr.erased.clans.commands.subcommands.admin;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.PlayerManager;
-import fr.erased.clans.manager.enums.PlayerRank;
+import fr.erased.clans.players.ClanPlayer;
+import fr.erased.clans.players.PlayerRank;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class ForceDemoteCommand {
@@ -24,31 +25,39 @@ public class ForceDemoteCommand {
             return;
         }
 
-        String promoted = args.getArgs(0);
+        String target = args.getArgs(0);
 
 
-        PlayerManager demotedManager = null;
-        try {
-            //TODO demotedManager = new PlayerManager(main, promoted);
-        } catch (Exception e){
-            player.sendMessage("§cCe joueur n'existe pas");
+        ClanPlayer clanPlayer = main.getPlayerManager().getPlayer(target);
+
+        if(clanPlayer == null){
+            player.sendMessage("§cCe joueur n'existe pas !");
             return;
         }
 
-        switch (demotedManager.getPlayerRank()) {
+        Player targetPlayer = Bukkit.getPlayer(target);
+
+        switch (clanPlayer.getRank()) {
             case CHEF:
-                player.sendMessage("§cIl est impossible de demote un chef, pour le changer /forcesetlead <joueur>");
                 break;
             case OFFICIER:
-                demotedManager.setPlayerRank(PlayerRank.MEMBRE);
-                player.sendMessage("§cVous avez dé-promu §e" + player.getName() + " en membre");
+                clanPlayer.setRank(PlayerRank.MEMBRE);
+                main.getPlayerManager().savePlayer(clanPlayer);
+                player.sendMessage("§a§l» §7Vous avez dé-promu §e" + target + " §7en membre");
+                if(targetPlayer != null){
+                    targetPlayer.sendMessage("§a§l» §7Vous avez été dé-promu membre par §e" + player.getName());
+                }
                 break;
             case MEMBRE:
-                demotedManager.setPlayerRank(PlayerRank.RECRUE);
-                player.sendMessage("§cVous avez dé-promu " + player.getName() + " en recrue");
+                clanPlayer.setRank(PlayerRank.RECRUE);
+                main.getPlayerManager().savePlayer(clanPlayer);
+                player.sendMessage("§a§l» §7Vous avez dé-promu §e" + target + " §7en recrue");
+                if(targetPlayer != null){
+                    targetPlayer.sendMessage("§a§l» §7Vous avez été dé-promu recrue par §e" + player.getName());
+                }
                 break;
             case RECRUE:
-                player.sendMessage("§cCe joueur ne peut plus aller plus bas, il est recrue");
+                player.sendMessage("§cCe joueur est déjà recrue");
                 break;
         }
     }

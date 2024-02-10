@@ -1,8 +1,8 @@
 package fr.erased.clans.commands.subcommands.admin;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.ClanManager;
-import fr.erased.clans.utils.FileUtils;
+import fr.erased.clans.chunks.ClaimedChunks;
+import fr.erased.clans.clans.Clan;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.entity.Player;
@@ -24,16 +24,22 @@ public class ForceUnclaimAllCommand {
             return;
         }
 
-        String clan = args.getArgs(0);
+        String clanName = args.getArgs(0);
 
-        if (!new FileUtils(main).getFile("clans", clan).exists()) {
+        if (main.getFileUtils().getFile("clans", clanName).exists()) {
             player.sendMessage("§cCe clan n'existe pas !");
             return;
         }
 
-        ClanManager clanManager = new ClanManager(main, clan);
-        main.getChunkManager().removeAllClaimsForClan(clan);
-        clanManager.removeAllClaims();
-        player.sendMessage("§aVous avez unclaim touts les chunks du clan " + clan);
+        Clan clan = main.getClanManager().getClan(clanName);
+
+        ClaimedChunks chunks = main.getChunkManager().getChunks();
+        chunks.removeAllClaimsForClan(clan);
+        main.getChunkManager().saveToFile(chunks);
+
+        clan.removeAllClaims();
+        main.getClanManager().saveClan(clan);
+
+        player.sendMessage("§aVous avez unclaim touts les chunks du clan " + clanName);
     }
 }

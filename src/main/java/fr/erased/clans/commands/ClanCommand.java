@@ -1,8 +1,8 @@
 package fr.erased.clans.commands;
 
 import fr.erased.clans.ErasedClans;
-import fr.erased.clans.manager.PlayerManager;
-import fr.erased.clans.invetory.ClanUI;
+import fr.erased.clans.clans.inventory.ClanInventory;
+import fr.erased.clans.players.ClanPlayer;
 import fr.erased.clans.utils.commands.Command;
 import fr.erased.clans.utils.commands.CommandArgs;
 import org.bukkit.entity.Player;
@@ -18,11 +18,11 @@ public class ClanCommand {
     @Command(name = "clan")
     public void onCommand(CommandArgs args) {
         Player player = args.getPlayer();
-        PlayerManager playerManager = new PlayerManager(main, player);
+        ClanPlayer clanPlayer = main.getPlayerManager().getPlayer(player.getUniqueId());
 
         if (args.getArgs().length == 0) {
-            if (playerManager.inClan()) {
-                new ClanUI(player, main, playerManager.getClan()).openClanUI();
+            if (clanPlayer.inClan()) {
+                new ClanInventory(player, main, clanPlayer.getClan()).openClanUI();
                 return;
             }
 

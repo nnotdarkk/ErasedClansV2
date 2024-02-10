@@ -1,4 +1,4 @@
-package fr.erased.clans.player.resolver;
+package fr.erased.clans.players.resolver;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

@@ -1,6 +1,5 @@
-package fr.erased.clans.utils.json.resolver;
+package fr.erased.clans.utils.json;
 
-import fr.erased.clans.utils.json.Defaulteable;
 import org.bson.Document;
 
 import java.util.Set;
